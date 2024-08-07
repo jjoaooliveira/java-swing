@@ -31,7 +31,7 @@ public class CarroUseCase implements InputBorder {
     }
 
     @Override
-    public ArrayList<String> searchByModel(String model) {
+    public ArrayList<String[]> searchByModel(String model) {
         return model != null ? iDatabaseAccess.selectByModel(model) : new ArrayList<>();
     }
 
@@ -48,5 +48,10 @@ public class CarroUseCase implements InputBorder {
             vehicle.getCor(),
             vehicle.getAno()
         );
+    }
+
+    @Override
+    public boolean delete(Integer id) {
+        return iDatabaseAccess.delete(id);
     }
 }

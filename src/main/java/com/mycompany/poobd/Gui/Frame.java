@@ -27,9 +27,9 @@ public class Frame extends javax.swing.JFrame {
         editarPanel.setCore(core);
         editarPanel.setParentPanel(jPanelMain);
         
+        jPanelMain.add(homePanel, "home");
         jPanelMain.add(buscaPanel, "buscar");
         jPanelMain.add(cadastroPanel, "cadastrar");
-        jPanelMain.add(homePanel, "home");
         jPanelMain.add(editarPanel, "editar");
     }
     
@@ -124,12 +124,12 @@ public class Frame extends javax.swing.JFrame {
         core.setAno("");
         
         CardLayout layout = (CardLayout) jPanelMain.getLayout();
-        layout.show(jPanelMain, "Cadastrar");
+        layout.show(jPanelMain, "cadastrar");
     }//GEN-LAST:event_jMenuCadastrarCarroActionPerformed
 
     private void HomeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeMouseClicked
         CardLayout layout = (CardLayout) jPanelMain.getLayout();
-        layout.show(jPanelMain, "Home");
+        layout.show(jPanelMain, "home");
     }//GEN-LAST:event_HomeMouseClicked
         
     public void main() {

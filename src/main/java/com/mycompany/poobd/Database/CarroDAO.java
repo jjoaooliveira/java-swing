@@ -49,8 +49,8 @@ public class CarroDAO implements IDatabaseAccess {
     }
 
     @Override
-    public ArrayList<String> selectByModel(String model) {
-        ArrayList<String> DataList = new ArrayList<>();
+    public ArrayList<String[]> selectByModel(String model) {
+        ArrayList<String[]> arrayList = new ArrayList<>();
         final String selectStatement = "SELECT id, modelo, cor, ano FROM carro WHERE modelo = ?";
 
         try(Connection connection = new PostgresqlConnection().getConnection();
@@ -60,16 +60,18 @@ public class CarroDAO implements IDatabaseAccess {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                DataList.add(rs.getString("id"));
-                DataList.add(rs.getString("modelo"));
-                DataList.add(rs.getString("cor"));
-                DataList.add(rs.getString("ano"));
+                String[] dataList = new String[4];
+                dataList[0] = rs.getString("id");
+                dataList[1] = rs.getString("modelo");
+                dataList[2] = rs.getString("cor");
+                dataList[3] = rs.getString("ano");
+                arrayList.add(dataList);
             }
-            return DataList;
+            return arrayList;
 
         } catch(SQLException ex) {
             System.out.println("Deu ruim na chamada ao banco de dados");
-            return DataList;
+            return arrayList;
         }
     }
 
@@ -113,8 +115,9 @@ public class CarroDAO implements IDatabaseAccess {
         }
         return DataList;
     }
-
-    public int delete(int id) {
+    
+    @Override
+    public boolean delete(Integer id) {
         final String deleteStatement = "DELETE FROM carro WHERE id = ?";
         Connection connection = null;
         PreparedStatement ps = null;
@@ -123,9 +126,10 @@ public class CarroDAO implements IDatabaseAccess {
             connection = new PostgresqlConnection().getConnection();
             ps = connection.prepareStatement(deleteStatement);
             ps.setInt(1, id);
-            return ps.executeUpdate();
+            ps.executeUpdate();
+            return true;
         } catch (SQLException ex) {
-            return -1;
+            return false;
         }
         finally {
             try {

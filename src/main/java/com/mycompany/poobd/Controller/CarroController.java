@@ -26,12 +26,18 @@ public class CarroController implements IController {
     }
 
     @Override
-    public ArrayList<String> searchByModel(String model) {
+    public ArrayList<String[]> searchByModel(String model) {
         return inputBorder.searchByModel(model);
     }
 
     @Override
     public ArrayList<String[]> searchAll() {
         return inputBorder.searchAll();
+    }
+
+    @Override
+    public boolean delete(String id) {
+        Integer convertedId = Integer.valueOf(id);
+        return inputBorder.delete(convertedId);
     }
 }

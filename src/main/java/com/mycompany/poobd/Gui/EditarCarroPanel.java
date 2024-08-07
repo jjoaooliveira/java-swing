@@ -58,6 +58,7 @@ public class EditarCarroPanel extends javax.swing.JPanel {
         jTextFieldAno = new javax.swing.JTextField();
         jButtonSalvar = new javax.swing.JButton();
         jButtonCancelar = new javax.swing.JButton();
+        jButtonDeletar = new javax.swing.JButton();
 
         jPanel1.setBackground(new java.awt.Color(102, 102, 102));
 
@@ -101,6 +102,14 @@ public class EditarCarroPanel extends javax.swing.JPanel {
             }
         });
 
+        jButtonDeletar.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jButtonDeletar.setText("DELETAR");
+        jButtonDeletar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDeletarPressionado(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -113,6 +122,8 @@ public class EditarCarroPanel extends javax.swing.JPanel {
                 .addContainerGap(111, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButtonDeletar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(46, 46, 46)
                         .addComponent(jButtonSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(35, 35, 35)
                         .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -145,7 +156,8 @@ public class EditarCarroPanel extends javax.swing.JPanel {
                 .addGap(67, 67, 67)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButtonSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonDeletar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(85, Short.MAX_VALUE))
         );
 
@@ -184,9 +196,20 @@ public class EditarCarroPanel extends javax.swing.JPanel {
         cl.show(parentPanel, "buscar");
     }//GEN-LAST:event_jButtonCancelarPressionado
 
+    private void jButtonDeletarPressionado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeletarPressionado
+        if(controller.delete(registerId)) {
+            JOptionPane.showConfirmDialog(this, "Registro deletado.");
+            CardLayout cl = (CardLayout) parentPanel.getLayout();
+            cl.show(parentPanel, "buscar");
+        } else {
+            JOptionPane.showMessageDialog(this, "Não foi possível deletar registro.");
+        }
+    }//GEN-LAST:event_jButtonDeletarPressionado
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCancelar;
+    private javax.swing.JButton jButtonDeletar;
     private javax.swing.JButton jButtonSalvar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelAno;

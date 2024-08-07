@@ -55,6 +55,7 @@ public class BuscaCarroPanel extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabelResultadoVazio = new javax.swing.JLabel();
+        jButtonAtualizar = new javax.swing.JButton();
 
         jPanel1.setBackground(new java.awt.Color(153, 153, 153));
 
@@ -103,14 +104,6 @@ public class BuscaCarroPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jTableCarros.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jTableCarrosFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTableCarrosFocusLost(evt);
-            }
-        });
         jTableCarros.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTableCarrosMouseClicked(evt);
@@ -146,22 +139,31 @@ public class BuscaCarroPanel extends javax.swing.JPanel {
         jLabelResultadoVazio.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelResultadoVazio.setText("Nenhum carro foi encontrado com este modelo...");
 
+        jButtonAtualizar.setText("atualizar");
+        jButtonAtualizar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonAtualizarMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(17, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane1)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabelResultadoVazio, javax.swing.GroupLayout.PREFERRED_SIZE, 432, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextFieldModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 554, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(jButtonPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButtonAtualizar)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jScrollPane1)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jLabelResultadoVazio, javax.swing.GroupLayout.PREFERRED_SIZE, 432, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jTextFieldModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 554, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(18, 18, 18)
+                            .addComponent(jButtonPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(14, Short.MAX_VALUE))
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -173,7 +175,9 @@ public class BuscaCarroPanel extends javax.swing.JPanel {
                     .addComponent(jButtonPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(48, 48, 48)
                 .addComponent(jLabelResultadoVazio)
-                .addGap(62, 62, 62)
+                .addGap(32, 32, 32)
+                .addComponent(jButtonAtualizar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15))
         );
@@ -192,19 +196,21 @@ public class BuscaCarroPanel extends javax.swing.JPanel {
 
     private void jButtonPesquisarClicado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPesquisarClicado
         if(!jTextFieldModelo.getText().equals("")) {
-            ArrayList<String> responseCarroList = controller.searchByModel(
+            ArrayList<String[]> responseCarroList = controller.searchByModel(
                     (String) jTextFieldModelo.getText()
             );
             DefaultTableModel model = (DefaultTableModel) jTableCarros.getModel();
             model.setRowCount(0);
 
             if(!responseCarroList.isEmpty()) {
-                model.addRow(new Object[] {
-                    responseCarroList.get(0),
-                    responseCarroList.get(1),
-                    responseCarroList.get(2),
-                    responseCarroList.get(3)
-                });
+                for (String[] carro : responseCarroList) {
+                    model.addRow(new Object[] {
+                        carro[0],
+                        carro[1],
+                        carro[2],
+                        carro[3]
+                    });
+                }
             } else {
                 jLabelResultadoVazio.setVisible(true);
             }
@@ -257,16 +263,12 @@ public class BuscaCarroPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jTableCarrosMouseClicked
 
-    private void jTableCarrosFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTableCarrosFocusGained
+    private void jButtonAtualizarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonAtualizarMouseClicked
         refresh();
-    }//GEN-LAST:event_jTableCarrosFocusGained
-
-    private void jTableCarrosFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTableCarrosFocusLost
-        refresh();
-    }//GEN-LAST:event_jTableCarrosFocusLost
-
+    }//GEN-LAST:event_jButtonAtualizarMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonAtualizar;
     private javax.swing.JButton jButtonPesquisar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelResultadoVazio;

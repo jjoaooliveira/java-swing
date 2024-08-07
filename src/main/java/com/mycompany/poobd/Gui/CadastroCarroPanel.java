@@ -153,6 +153,7 @@ public class CadastroCarroPanel extends javax.swing.JPanel {
     private void jButtonSalvarPressionado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvarPressionado
         String[] inputData = {jTextFieldModelo.getText(), jTextFieldCor.getText(), jTextFieldAno.getText()};
         if (controller.saveInputData(inputData)) {
+            JOptionPane.showMessageDialog(this, "Registro cadastrado.");
             CardLayout cl = (CardLayout) parentPanel.getLayout();
             cl.show(parentPanel, "home");
         } else {
