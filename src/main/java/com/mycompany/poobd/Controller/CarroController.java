@@ -1,9 +1,9 @@
 package com.mycompany.poobd.Controller;
 
-import com.mycompany.poobd.Usecase.InputVehicleData;
-import com.mycompany.poobd.Usecase.InputBorder;
-
-import java.util.ArrayList;
+import com.mycompany.poobd.Services.InputBorder;
+import com.mycompany.poobd.Services.VehicleDTO;
+import java.util.List;
+import java.util.Optional;
 
 public class CarroController implements IController {
     private InputBorder inputBorder;
@@ -13,31 +13,51 @@ public class CarroController implements IController {
     }
 
     @Override
-    public boolean saveInputData(String[] rawInputData) {
-        InputVehicleData vehicle = new InputVehicleData(rawInputData);
-        return inputBorder.saveData(vehicle);
+    public Response saveData(String model, String color, String year) {
+        try {
+            inputBorder.saveData(new VehicleDTO(Optional.ofNullable(null), model, color, year));
+            return new Response("Operação concluída com sucesso.", null);
+        } catch (NullPointerException e) {
+            return new Response(e.getMessage(), null);
+        }
     }
 
     @Override
-    public boolean updateInputData(String id, String[] rawInputData) {
+    public Response updateData(String id, String model, String color, String year) {
         Integer convertedId = Integer.valueOf(id);
-        InputVehicleData vehicle = new InputVehicleData(convertedId, rawInputData);
-        return inputBorder.updateData(vehicle);
+        VehicleDTO data = new VehicleDTO(Optional.of(convertedId), model, color, year);
+        try {
+            inputBorder.updateData(data);
+            return new Response("Registro atualizado com sucesso.", null);
+        } catch (NullPointerException e) {
+            return new Response(e.getMessage(), null);
+        }
     }
 
     @Override
-    public ArrayList<String[]> searchByModel(String model) {
-        return inputBorder.searchByModel(model);
+    public Response searchByModel(String model) {
+        try {
+            List<String[]> list = inputBorder.searchByModel(model);
+            return new Response(null, Optional.of(list));
+        } catch (NullPointerException e) {
+            return new Response(e.getMessage(), null);
+        }
     }
 
     @Override
-    public ArrayList<String[]> searchAll() {
-        return inputBorder.searchAll();
+    public Response searchAll() {
+        List<String[]> list = inputBorder.searchAll();
+        return new Response(null, Optional.of(list));
     }
 
     @Override
-    public boolean delete(String id) {
+    public Response delete(String id) {
         Integer convertedId = Integer.valueOf(id);
-        return inputBorder.delete(convertedId);
+        try {
+            inputBorder.delete(convertedId);
+            return new Response("Registro deletado com sucesso.", null);
+        } catch (NullPointerException e) {
+            return new Response(e.getMessage(), null);
+        }
     }
 }
