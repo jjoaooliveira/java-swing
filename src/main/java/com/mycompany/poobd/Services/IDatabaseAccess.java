@@ -1,11 +1,13 @@
 package com.mycompany.poobd.Usecase;
 
+import com.mycompany.poobd.Domain.Vehicle;
+
 import java.util.ArrayList;
 
 public interface IDatabaseAccess {
-    boolean save(String modelo, String cor, String ano);
-    boolean update(Integer id, String modelo, String cor, String ano);
+    void save(Vehicle vehicle);
+    void update(Vehicle vehicle);
     ArrayList<String[]> selectByModel(String model);
     ArrayList<String[]> selectAll();
-    boolean delete(Integer id);
+    void delete(Integer id);
 }

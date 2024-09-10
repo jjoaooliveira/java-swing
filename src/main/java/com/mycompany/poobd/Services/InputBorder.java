@@ -3,9 +3,9 @@ package com.mycompany.poobd.Usecase;
 import java.util.ArrayList;
 
 public interface InputBorder {
-    boolean saveData(InputVehicleData vehicle);
-    boolean updateData(InputVehicleData vehicle);
+    void saveData(VehicleDTO vehicle);
+    void updateData(VehicleDTO vehicle);
     ArrayList<String[]> searchByModel(String model);
     ArrayList<String[]> searchAll();
-    boolean delete(Integer id);
+    void delete(Integer id);
 }
