@@ -1,50 +1,55 @@
 package com.mycompany.poobd.Database;
 
-import com.mycompany.poobd.Usecase.IDatabaseAccess;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import com.mycompany.poobd.Domain.Vehicle;
+import com.mycompany.poobd.Services.IDatabaseAccess;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class CarroDAO implements IDatabaseAccess {
+    Properties properties;
+
+    public CarroDAO() {
+        loadProperties();
+    }
 
     @Override
-    public boolean save(String model, String color, String year) {
+    public void save(Vehicle vehicle) {
         final String insertStatement = "INSERT INTO carro (modelo, cor, ano) VALUES (?, ?, ?)";
 
-        try(Connection connection = new PostgresqlConnection().getConnection();
-             PreparedStatement ps = connection.prepareStatement(insertStatement))
-        {
-            ps.setString(1, model);
-            ps.setString(2, color);
-            ps.setString(3, year);
+        try(
+            Connection connection = new PostgresqlConnection().getConnection(properties);
+            PreparedStatement ps = connection.prepareStatement(insertStatement)
+        ) {
+            ps.setString(1, vehicle.getModel());
+            ps.setString(2, vehicle.getColor());
+            ps.setString(3, vehicle.getYear());
             ps.executeUpdate();
-            return true;
-        } catch (SQLException ex) {
-            System.out.println("Deu ruim na chamada ao banco de dados:" + ex);
-            return false;
+        } catch (SQLException e) {
+            System.out.printf("Error code: %d", e.getErrorCode());
+            System.err.printf("Cause: ", e.getCause());
+            System.out.printf("Response: ", e.getMessage());
         }
     }
 
     @Override
-    public boolean update(Integer id, String model, String color, String year) {
+    public void update(Vehicle vehicle) {
         final String updateStatement = "UPDATE carro SET modelo = ?, cor = ?, ano = ? WHERE id = ?";
 
-        try (Connection connection = new PostgresqlConnection().getConnection();
-             PreparedStatement ps = connection.prepareStatement(updateStatement)
+        try (
+            Connection connection = new PostgresqlConnection().getConnection(properties);
+            PreparedStatement ps = connection.prepareStatement(updateStatement)
         ){
-            ps.setString(1, model);
-            ps.setString(2, color);
-            ps.setString(3, year);
-            ps.setInt(4, id);
+            ps.setString(1, vehicle.getModel());
+            ps.setString(2, vehicle.getColor());
+            ps.setString(3, vehicle.getYear());
+            ps.setInt(4, vehicle.getId());
             ps.executeUpdate();
-            return true;
         }
         catch (SQLException e) {
             System.out.println("Erro inesperado ao consultar o banco de dados:" + e);
-            return false;
         }
     }
 
@@ -53,9 +58,10 @@ public class CarroDAO implements IDatabaseAccess {
         ArrayList<String[]> arrayList = new ArrayList<>();
         final String selectStatement = "SELECT id, modelo, cor, ano FROM carro WHERE modelo = ?";
 
-        try(Connection connection = new PostgresqlConnection().getConnection();
-            PreparedStatement ps = connection.prepareStatement(selectStatement))
-        {
+        try(
+            Connection connection = new PostgresqlConnection().getConnection(properties);
+            PreparedStatement ps = connection.prepareStatement(selectStatement)
+        ){
             ps.setString(1, model);
             ResultSet rs = ps.executeQuery();
 
@@ -69,8 +75,8 @@ public class CarroDAO implements IDatabaseAccess {
             }
             return arrayList;
 
-        } catch(SQLException ex) {
-            System.out.println("Deu ruim na chamada ao banco de dados");
+        } catch(SQLException e) {
+            System.out.println("Erro inesperado na chamada ao banco de dados:" + e);
             return arrayList;
         }
     }
@@ -79,15 +85,12 @@ public class CarroDAO implements IDatabaseAccess {
     public ArrayList<String[]> selectAll() {
         final String statement = "SELECT * FROM carro";
         ArrayList<String[]> DataList = new ArrayList<>();
-        ResultSet rs = null;
-        PreparedStatement ps = null;
-        Connection connection = null;
 
-        try {
-            connection = new PostgresqlConnection().getConnection();
-            ps = connection.prepareStatement(statement);
-            rs = ps.executeQuery();
-
+        try(
+            Connection connection = new PostgresqlConnection().getConnection(properties);
+            PreparedStatement ps = connection.prepareStatement(statement);
+            ResultSet rs = ps.executeQuery();
+        ){
             while (rs.next()) {
                 String[] auxArray = new String[4];
                 auxArray[0] = rs.getString("id");
@@ -96,53 +99,39 @@ public class CarroDAO implements IDatabaseAccess {
                 auxArray[3] = rs.getString("ano");
                 DataList.add(auxArray);
             }
-        } catch (SQLException ex) {
-            System.out.println("Erro: " + ex);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println("Erro ao fechar conexão com banco de dados: " + ex);
-            }
+        }
+        catch (SQLClientInfoException e) {
+            System.out.println("Erro: " + e);
+        } catch (SQLException e) {
+            System.out.println("Erro inesperado na chamada ao banco de dados:" + e);
         }
         return DataList;
     }
     
     @Override
-    public boolean delete(Integer id) {
+    public void delete(Integer id) {
         final String deleteStatement = "DELETE FROM carro WHERE id = ?";
-        Connection connection = null;
-        PreparedStatement ps = null;
-
-        try {
-            connection = new PostgresqlConnection().getConnection();
-            ps = connection.prepareStatement(deleteStatement);
+        try(
+            Connection connection = new PostgresqlConnection().getConnection(properties);
+            PreparedStatement ps = connection.prepareStatement(deleteStatement);
+        ) {
             ps.setInt(1, id);
             ps.executeUpdate();
-            return true;
-        } catch (SQLException ex) {
-            return false;
+        } catch (SQLException e) {
+            System.out.println("Erro inesperado na chamada ao banco de dados:" + e);
         }
-        finally {
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
+    }
 
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println("Erro ao fechar conexão com banco de dados: " + ex);
-            }
+    private void loadProperties() {
+        properties = new Properties();
+        try(
+            InputStream propertiesFileStream = this.getClass()
+            .getResourceAsStream("/dados.properties")
+        ) {
+            properties.load(propertiesFileStream);
+        } catch (IOException e) {
+            System.err.printf("Cause: ", e.getCause());
+            System.out.printf("Response: ", e.getMessage());
         }
     }
 }
