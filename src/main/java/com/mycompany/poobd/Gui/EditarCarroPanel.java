@@ -1,6 +1,8 @@
 package com.mycompany.poobd.Gui;
 
 import com.mycompany.poobd.Controller.IController;
+import com.mycompany.poobd.Controller.Response;
+
 import java.awt.CardLayout;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JOptionPane;
@@ -9,8 +11,7 @@ import javax.swing.JPanel;
 public class EditarCarroPanel extends javax.swing.JPanel {
     private JPanel parentPanel;
     private IController controller;
-    private Core core;
-    private String registerId;
+    private String id;
     
     public EditarCarroPanel(IController controller) {
         this.controller = controller;
@@ -22,8 +23,6 @@ public class EditarCarroPanel extends javax.swing.JPanel {
     }
     
     public void setCore(Core core) {
-        this.core = core;
-        
         core.addPropertyChangeListener((PropertyChangeEvent evt) -> {
             if(Core.MODELO.equals(evt.getPropertyName())) {
                 String modelo = evt.getNewValue().toString();
@@ -39,9 +38,9 @@ public class EditarCarroPanel extends javax.swing.JPanel {
             }
             if(Core.ID.equals(evt.getPropertyName())) {
                 String id = evt.getNewValue().toString();
-                registerId = id;
+                this.id = id;
             }
-        }); 
+        });
     }
     
     @SuppressWarnings("unchecked")
@@ -180,15 +179,15 @@ public class EditarCarroPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonConfirmarPressionado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarPressionado
-        String[] inputData = {jTextFieldModelo.getText(), jTextFieldCor.getText(), jTextFieldAno.getText()};
-        
-        if(controller.updateInputData(registerId, inputData)){
-            JOptionPane.showMessageDialog(this, "Registro atualizado.");
-            CardLayout cl = (CardLayout) parentPanel.getLayout();
-            cl.show(parentPanel, "buscar");
-        } else {
-            JOptionPane.showMessageDialog(this, "Não foi possível atualizar registro.");
+        CardLayout cl = (CardLayout) parentPanel.getLayout();
+        if(jTextFieldAno.getText().length() > 4) {
+            JOptionPane.showMessageDialog(this, "Campo ano deve conter apenas números e ter até 4 digitos.");
+            return;
         }
+        Response response = controller.updateData(id, jTextFieldModelo.getText(), jTextFieldCor.getText(), jTextFieldAno.getText());
+        JOptionPane.showMessageDialog(this, response.message());
+        cl.show(parentPanel, "buscar");
+
     }//GEN-LAST:event_jButtonConfirmarPressionado
 
     private void jButtonCancelarPressionado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarPressionado
@@ -197,13 +196,11 @@ public class EditarCarroPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButtonCancelarPressionado
 
     private void jButtonDeletarPressionado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeletarPressionado
-        if(controller.delete(registerId)) {
-            JOptionPane.showConfirmDialog(this, "Registro deletado.");
-            CardLayout cl = (CardLayout) parentPanel.getLayout();
-            cl.show(parentPanel, "buscar");
-        } else {
-            JOptionPane.showMessageDialog(this, "Não foi possível deletar registro.");
-        }
+        CardLayout cl = (CardLayout) parentPanel.getLayout();
+        Response response = controller.delete(id);
+        JOptionPane.showMessageDialog(this, response.message());
+        cl.show(parentPanel, "buscar");
+
     }//GEN-LAST:event_jButtonDeletarPressionado
 
 

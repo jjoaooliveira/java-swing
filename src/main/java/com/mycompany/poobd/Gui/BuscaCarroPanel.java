@@ -1,8 +1,11 @@
 package com.mycompany.poobd.Gui;
 
 import com.mycompany.poobd.Controller.IController;
+import com.mycompany.poobd.Controller.Response;
+
 import java.awt.CardLayout;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
@@ -31,7 +34,8 @@ public class BuscaCarroPanel extends javax.swing.JPanel {
     private void refresh() {
         DefaultTableModel model = (DefaultTableModel) jTableCarros.getModel();
         model.setRowCount(0);
-        ArrayList<String[]> listaCarro = controller.searchAll();
+        Response response = controller.searchAll();
+        List<String[]> listaCarro = response.list().get();
 
         for (String[] carro : listaCarro) {
             model.addRow(new Object[] {
@@ -196,9 +200,8 @@ public class BuscaCarroPanel extends javax.swing.JPanel {
 
     private void jButtonPesquisarClicado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPesquisarClicado
         if(!jTextFieldModelo.getText().equals("")) {
-            ArrayList<String[]> responseCarroList = controller.searchByModel(
-                    (String) jTextFieldModelo.getText()
-            );
+            Response response = controller.searchByModel(jTextFieldModelo.getText());
+            List<String[]> responseCarroList = response.list().get();
             DefaultTableModel model = (DefaultTableModel) jTableCarros.getModel();
             model.setRowCount(0);
 

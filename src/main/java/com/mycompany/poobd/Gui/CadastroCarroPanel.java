@@ -1,6 +1,8 @@
 package com.mycompany.poobd.Gui;
 
 import com.mycompany.poobd.Controller.IController;
+import com.mycompany.poobd.Controller.Response;
+
 import java.awt.CardLayout;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -8,7 +10,6 @@ import javax.swing.JPanel;
 public class CadastroCarroPanel extends javax.swing.JPanel {
     private IController controller;
     private JPanel parentPanel;
-    private Core core;
     
     public CadastroCarroPanel(IController controller) {
         this.controller = controller;
@@ -151,14 +152,32 @@ public class CadastroCarroPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonSalvarPressionado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvarPressionado
-        String[] inputData = {jTextFieldModelo.getText(), jTextFieldCor.getText(), jTextFieldAno.getText()};
-        if (controller.saveInputData(inputData)) {
-            JOptionPane.showMessageDialog(this, "Registro cadastrado.");
-            CardLayout cl = (CardLayout) parentPanel.getLayout();
-            cl.show(parentPanel, "home");
-        } else {
-            JOptionPane.showMessageDialog(this, "Não foi possível salvar registro.");
+        CardLayout cl = (CardLayout) parentPanel.getLayout();
+        if(jTextFieldModelo.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Modelo não informado.");
+            return;
         }
+        if(jTextFieldCor.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Cor não informado.");
+            return;
+        }
+        if(jTextFieldAno.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Ano não informado.");
+            return;
+        }
+        if(jTextFieldAno.getText().length() > 4) {
+            JOptionPane.showMessageDialog(this, "Campo ano deve conter apenas números e ter até 4 digitos.");
+            return;
+        }
+
+        Response response = controller.saveData(
+            jTextFieldModelo.getText(),
+            jTextFieldCor.getText(),
+            jTextFieldAno.getText()
+        );
+
+        JOptionPane.showMessageDialog(this, response.message());
+        cl.show(parentPanel, "home");
     }//GEN-LAST:event_jButtonSalvarPressionado
 
     private void jButtonCancelarPressionado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarPressionado
