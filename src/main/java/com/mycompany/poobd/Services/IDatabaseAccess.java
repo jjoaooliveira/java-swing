@@ -1,4 +1,4 @@
-package com.mycompany.poobd.Usecase;
+package com.mycompany.poobd.Services;
 
 import com.mycompany.poobd.Domain.Vehicle;
 
