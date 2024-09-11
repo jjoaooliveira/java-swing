@@ -13,4 +13,4 @@ O sistema conta com operações CRUD por meio do banco de dados Postgresql. Os s
 encontram temporariamente no arquivo `bd.sql` presente no componente `Database`.
 
 ## Interface
-Intefarce gráfica desenvolvida utilizando Swing foi organizada em um JFrame principal juntamente a quatro JPanels.
+Intefarce gráfica, desenvolvida utilizando Swing, foi organizada em um JFrame principal juntamente a quatro JPanels.
